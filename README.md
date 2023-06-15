@@ -1,6 +1,7 @@
-![Chon2WD](https://sourceforge.net/p/chonos/bots/ci/master/tree/models/2WD/images/2wd.png?format=raw "Chon2WD")
-# ChonBot 2WDv1
+# ChonBot 2WD
 ### _A low-cost 2WD prototype model for Embedded Multi-agent Systems_
+![2wd](https://github.com/chon-group/bot2WD/assets/32855001/b5a9442c-c064-492e-ac64-9c5a792cedb6)
+
 ## Reasoning Layer
 ### Actions
 ```sh
