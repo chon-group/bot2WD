@@ -1,4 +1,4 @@
-#include <Javino.h>               //Available at: http://javino.sf.net
+#include <Javino.h>               //Available at: https://github.com/chon-group/javino2arduino
 #include <HCSR04.h>               //Available at: https://www.arduinolibraries.info/libraries/hcsr04
 
 #define PinBreakL  2               // BreakLight
@@ -21,7 +21,12 @@ HCSR04 hc(PinTrig, PinEcho);
 String strFlashLStatus, strLightStatus, strBreakLStatus, strBuzzerStatus, strMotorStatus, strSpeedStatus;
 int intSpeed;
 
+void serialEvent(){
+  javino.readSerial();
+}
+
 void setup(){
+  javino.start(9600);
   pinMode(PinBreakL,  OUTPUT);
   pinMode(PinHeadL,   OUTPUT);
   pinMode(PinFLRight, OUTPUT);
@@ -36,7 +41,6 @@ void setup(){
   pinMode(PinLDR,     INPUT);
   pinMode(PinLineFR,  INPUT);
   pinMode(PinLineFL,  INPUT);
-  Serial.begin(9600);
 
   breakL("off");
   light("off");
@@ -49,9 +53,9 @@ void setup(){
 
 
 void loop(){
-if(javino.availablemsg()){
-  String strMsg = javino.getmsg();
-  if(strMsg=="getPercepts")javino.sendmsg(getStatus());
+if(javino.availableMsg()){
+  String strMsg = javino.getMsg();
+  if(strMsg=="getPercepts")javino.sendMsg(getStatus());
     else if(strMsg=="buzzerOnH")buzzer("high");
     else if(strMsg=="buzzerOn")buzzer("on");
     else if(strMsg=="buzzerOnL")buzzer("low");

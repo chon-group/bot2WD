@@ -23,12 +23,3 @@
 +breakL(off | on).                                                  // BreakLight LED
 +buzzer(off | on | high | low).                                     // Buzzer
 ```
-## Interfacing and Firmware Layer
-+ Libraries
-    + [Javino.zip](https://sourceforge.net/p/chonos/bots/ci/master/tree/others/libraries/Javino.zip?format=raw)
-    + [HCSR04.zip](https://sourceforge.net/p/chonos/bots/ci/master/tree/others/libraries/HCSR04_ultrasonic_sensor.zip?format=raw) 
-+ Firmware Source
-    + [2WD.ino](https://sourceforge.net/p/chonos/bots/ci/master/tree/models/2WD/firmware/2WD/2WD.ino) 
-
-## Hardware Layer
-![Chon2WD schematic](https://sourceforge.net/p/chonos/bots/ci/master/tree/models/2WD/ChonBot-2WD-small.png?format=raw "Chon2WD schematic")
