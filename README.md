@@ -5,22 +5,24 @@
 ## Reasoning Layer
 ### Actions
 ```sh
-.act(buzzerOn | buzzerOnH | buzzerOnL | buzzerOff);                 // Buzzer
-.act(lightOn | lightOnH | lightOnL | lightOff);                     // HeadLight
-.act(breakLOn | breakLOff);                                         // BreakLight
-.act(goAhead | goLeft | goRight | goBack | stop );                  // Motor direction
-.act( speedH | speedM | speedL);                                    // Motor speed
-.act(alertOn | flashROn | flashLOn | flashLightOff);                // FlashLight
+.act(goAhead  | goLeft    | goRight   | goBack  | stop ); // Motor direction
+.act(buzzerOn | buzzerOnH | buzzerOnL | buzzerOff);       // Buzzer
+.act(lightOn  | lightOnH  | lightOnL  | lightOff);        // HeadLight
+.act(alertOn  | flashROn  | flashLOn  | flashLightOff);   // FlashLight
+.act(speedH   | speedM    | speedL);                      // Motor speed
+.act(breakLOn | breakLOff);                               // BreakLight
 ```
 ### Perceptions
 ```sh
-+luminosity(N).                                                     // LDR sensor
-+distance(N).                                                       // Ultrasonic sensor
-+motor(stopped | running | turningRight | turningLeft | backward).  // Motor Status
-+speed(default | high | low).                                       // Motor Speed
-+lineL(N). +lineR(N).                                               // Line-following sensors
-+flashLight(off | right | left | alert).                            // Flashlights LED
-+light( off | on | high | low).                                     // HeadLight LED
-+breakL(off | on).                                                  // BreakLight LED
-+buzzer(off | on | high | low).                                     // Buzzer
+
++motor(stopped  | running | turningRight  | turningLeft | backward).  // Motor Status
++flashLight(off | right   | left          | alert).                   // Flashlights LED
++light( off     | on      | high          | low).                     // HeadLight LED
++buzzer( off    | on      | high          | low).                     // Buzzer
++speed(default  | high    | low).                                     // Motor Speed
++breakL( off    | on).                                                // BreakLight LED
++luminosity(N).                                                       // LDR sensor
++distance(N).                                                         // Ultrasonic sensor
++lineL(N).                                                            // Line-following sensors
++lineR(N).                                               
 ```
