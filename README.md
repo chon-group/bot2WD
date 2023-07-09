@@ -1,6 +1,7 @@
 # ChonBot 2WD
+ChonBots are low-cost basic prototype models, part of a [Toolkit for teaching AI supported by robotic-agents](https://doi.org/10.5753/wei.2023.229753).
 ### _A low-cost 2WD prototype model for Embedded Multi-agent Systems_
-![2wd](https://github.com/chon-group/bot2WD/assets/32855001/b5a9442c-c064-492e-ac64-9c5a792cedb6)
+![Untitled design-min](https://github.com/chon-group/bot2WD/assets/32855001/7e33eacd-4964-4752-9baf-10cd005d50ef)
 
 ## Reasoning Layer
 ### Actions
@@ -26,3 +27,5 @@
 +lineL(N).                                                            // Line-following sensors
 +lineR(N).                                               
 ```
+### How to cite?
+LAZARIN, Nilson Mori; PANTOJA, Carlos Eduardo; VITERBO, José. Towards a Toolkit for Teaching AI Supported by Robotic-agents: Proposal and First Impressions. _In: WORKSHOP SOBRE EDUCAÇÃO EM COMPUTAÇÃO (WEI)_, 31. , 2023, João Pessoa/PB. Anais [...]. Porto Alegre: Sociedade Brasileira de Computação, 2023 . p. 20-29. ISSN 2595-6175. DOI: https://doi.org/10.5753/wei.2023.229753. 
