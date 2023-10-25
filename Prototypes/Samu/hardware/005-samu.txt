@@ -1,0 +1,37 @@
+// Farol
+PinLight  2               
+
+// Freio
+PinBreakL 3               
+
+// Sensor de Ultrasom Echo 5 e Trig 4
+PinEcho   5               
+PinTrig   4               
+
+// Buzzer
+PinBuzzer 22               
+
+// Ponte H M1=10, M2=9, M3=8, M4=7
+PinBridH1 7               
+PinBridH2 8
+PinBridH3 9
+PinBridH4 10
+
+// Transceptor RF: Rx11, Tx 12
+PinRx     11              
+PinTx     12
+
+// Alerta ou Giroflex
+PinLed    13              
+
+// Sensor de Luz
+PinLDR    A0         
+     
+// Seguidor de Linha: Direito A1, Esquerdo A2
+Não possui
+
+//MAC
+
+
+//Arduino MEGA
+//Raspberry Pi Zero W
