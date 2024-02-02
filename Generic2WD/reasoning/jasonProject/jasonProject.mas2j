@@ -12,7 +12,7 @@
 
 MAS jasonProject {
 
-    agents: driver agentArchClass jason.Argo;
+    agents: max agentArchClass jason.Argo;
 
     aslSourcePath: "src/agt";
 }
