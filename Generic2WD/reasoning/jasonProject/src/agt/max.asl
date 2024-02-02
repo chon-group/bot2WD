@@ -1,5 +1,5 @@
 /* Initial beliefs and rules */
-serialPort(ttyEmulatedPort0).
+serialPort(ttyACM0).
 /* Initial goals */
 !start.
 
