@@ -1,141 +1,229 @@
-#include <Javino.h>     //Available at: https://github.com/chon-group/javino2arduino
-#include <HCSR04.h>     //Available at: https://github.com/Martinsos/arduino-lib-hc-sr04
+#include <Javino.h>               //Available at: https://github.com/chon-group/javino2arduino
+#include <HCSR04.h>               //Available at: https://www.arduinolibraries.info/libraries/hcsr04
 
-#define PinLight  2     // Farol
-#define PinBreakL 3     // Freio
-#define PinEcho   4     // Sensor de Ultrasom Echo 4 e Trig 5
-#define PinTrig   5              
-#define PinBuzzer 6     // Buzzer
-#define PinBridH1 7     // Ponte H M1=7, M2=8, M3=9, M4=10
-#define PinBridH2 8
-#define PinBridH3 9
-#define PinBridH4 10
-#define PinLed    13    // Alerta ou Giroflex
-#define PinLDR    A0    // Sensor de Luz
+
+#define PinBreakL  3               // BreakLight
+#define PinHeadL   2               // HeadLight 
+#define PinFLRight 13               // Right Flashlight
+#define PinBridH1  7               // HBridge IN1
+#define PinBridH2  8               // HBridge IN2
+#define PinEcho    4               // Ultrasonic sensor ECHO
+#define PinTrig    5               // Ultrasonic sensor TRIG
+#define PinBridH3  9               // HBridge IN3
+#define PinBridH4  10              // HBridge IN4
+#define PinBuzzer  6              // Buzzer
+#define PinFLLeft  13              // Left Flashlight
+#define PinLDR     A0              // LDR sensor
+//#define PinLineFR  A1              // Right infrared reflective sensor
+//#define PinLineFL  A2              // Left infrared reflective sensor
 
 
 Javino javino;
-UltraSonicDistanceSensor hc(PinTrig, PinEcho);
-String strLedStatus, strLightStatus, strBreakLStatus, strBuzzerStatus, strMotorStatus;
-unsigned long lastPercept = -1;
+HCSR04 hc(PinTrig, PinEcho);
+
+String strFlashLStatus, strLightStatus, strBreakLStatus, strBuzzerStatus, strMotorStatus, strSpeedStatus;
+int intSpeed;
 
 void serialEvent(){
-   javino.readSerial();
+  javino.readSerial();
 }
+
+void setup(){
+  javino.start(9600);
+  pinMode(PinBreakL,  OUTPUT);
+  pinMode(PinHeadL,   OUTPUT);
+  pinMode(PinFLRight, OUTPUT);
+  pinMode(PinBridH1,  OUTPUT);
+  pinMode(PinBridH2,  OUTPUT);
+  pinMode(PinEcho,    INPUT);
+  pinMode(PinTrig,    OUTPUT);  
+  pinMode(PinBridH3,  OUTPUT);
+  pinMode(PinBridH4,  OUTPUT);
+  pinMode(PinBuzzer,  OUTPUT);  
+  pinMode(PinFLLeft,  OUTPUT);
+  pinMode(PinLDR,     INPUT);
+  //pinMode(PinLineFR,  INPUT);
+  //pinMode(PinLineFL,  INPUT);
+
+  breakL("off");
+  light("off");
+  flashlight("alert","off");
+  stopRightNow();
+  buzzer("off");
+  setMotorSpeed("default");
+}
+
 
 
 void loop(){
 if(javino.availableMsg()){
   String strMsg = javino.getMsg();
-  if(strMsg=="getPercepts"){javino.sendMsg(getStatus());}
-    else if(strMsg=="buzzerOn") {buzzer("on");}
-    else if(strMsg=="buzzerOff")  {buzzer("off");}
-    else if(strMsg=="ledOn")  {led("on");}
-    else if(strMsg=="ledOff") {led("off");}
-    else if(strMsg=="lightOn")  {light("on");}
-    else if(strMsg=="lightOff") {light("off");}
-    else if(strMsg=="breakLOn") {breakL("on");}
-    else if(strMsg=="breakLOff")  {breakL("off");}
-    else if(strMsg=="stop") {stopRightNow();}
-    else if(strMsg=="goLeft") {turnLeft();}
-    else if(strMsg=="goRight")  {turnRight();}
-    else if(strMsg=="goAhead")  {goAhead();}
-
-    lastPercept = millis();
+  if(strMsg=="getPercepts")javino.sendMsg(getStatus());
+    else if(strMsg=="buzzerOnH")buzzer("high");
+    else if(strMsg=="buzzerOn")buzzer("high");
+    else if(strMsg=="buzzerOnL")buzzer("high");
+    else if(strMsg=="buzzerOff")buzzer("off");
+    else if(strMsg=="lightOnH")light("high");
+    else if(strMsg=="lightOn")light("high");
+    else if(strMsg=="lightOnL")light("high");
+    else if(strMsg=="lightOff")light("off");
+    else if(strMsg=="breakLOn")breakL("on");
+    else if(strMsg=="breakLOff")breakL("off");
+    else if(strMsg=="stop")stopRightNow();
+    else if(strMsg=="goLeft")turnLeft();
+    else if(strMsg=="goRight")turnRight();
+    else if(strMsg=="goAhead")goAhead();
+    else if(strMsg=="goBack")goBack();
+    else if(strMsg=="speedH")setMotorSpeed("high");
+    else if(strMsg=="speedM")setMotorSpeed("high");
+    else if(strMsg=="speedL")setMotorSpeed("high");
+    else if(strMsg=="alertOn") flashlight("alert","on");
+    else if(strMsg=="flashROn") flashlight("right","on");
+    else if(strMsg=="flashLOn") flashlight("right","on");
+    else if(strMsg=="flashLightOff") flashlight("all","off");
   }
+}
 
-  if((lastPercept != -1) && (millis() > lastPercept+5000)){
-    powerOff();
+
+void flashlight(String strFLight, String strOpt){
+  if(strOpt=="off"){
+    digitalWrite(PinFLLeft, LOW);
+    digitalWrite(PinFLRight, LOW);
+    setFlashLStatus("off");
+  }else{
+    if(strFLight=="right"){
+      digitalWrite(PinFLLeft, LOW);
+      digitalWrite(PinFLRight, HIGH);
+      setFlashLStatus("right");      
+    }else if(strFLight=="left"){
+      digitalWrite(PinFLLeft, HIGH);
+      digitalWrite(PinFLRight, LOW);
+      setFlashLStatus("left");            
+    }else{
+      digitalWrite(PinFLLeft, HIGH);
+      digitalWrite(PinFLRight, HIGH);
+      setFlashLStatus("alert");       
+    }
   }
 }
 
 void buzzer(String strOpt){
-if(strOpt=="on"){digitalWrite(PinBuzzer, HIGH);}
-  else{digitalWrite(PinBuzzer, LOW);}
-setBuzzerStatus(strOpt);
+  if(strOpt=="on")analogWrite(PinBuzzer, 191);
+  else if(strOpt=="high")analogWrite(PinBuzzer, 255);
+  else if(strOpt=="low")analogWrite(PinBuzzer, 127);
+  else digitalWrite(PinBuzzer, LOW);
+  setBuzzerStatus(strOpt);
 }
 
-void led(String strledOpt){
-if(strledOpt=="on"){digitalWrite(PinLed, HIGH);}
-  else{digitalWrite(PinLed, LOW);}
-setLedStatus(strledOpt);
+int getMotorSpeed(){
+  return intSpeed;
 }
+
+void setMotorSpeed(String strSpeed){
+  if(strSpeed=="default") intSpeed=191;
+  else if(strSpeed=="high") intSpeed=255;
+  else intSpeed=127;
+  setSpeedStatus(strSpeed);
+}
+
+
 
 void light(String strledOpt){
-if(strledOpt=="on"){digitalWrite(PinLight, HIGH);}
-  else{digitalWrite(PinLight, LOW);}
-setLightStatus(strledOpt);
+  if(strledOpt=="on") analogWrite(PinHeadL, 127);
+  else if(strledOpt=="high") analogWrite(PinHeadL, 255);
+  else if(strledOpt=="low") analogWrite(PinHeadL, 63);
+  else digitalWrite(PinHeadL, LOW);
+  setLightStatus(strledOpt);
 }
 
 void breakL(String strledOpt){
-  if(strledOpt=="on"){
-    digitalWrite(PinBreakL, HIGH);
-  }else{
-    digitalWrite(PinBreakL, LOW);
-  }
+  if(strledOpt=="on")digitalWrite(PinBreakL, HIGH);
+  else digitalWrite(PinBreakL, LOW);
   setBreakLStatus(strledOpt);
 }
 
+void goBack(){
+    analogWrite(PinBridH1, 255);
+    analogWrite(PinBridH2, 0);
+    analogWrite(PinBridH3, 255);
+    analogWrite(PinBridH4, 0);
+    setMotorStatus("backward");
+    delay(200);
+    analogWrite(PinBridH1, getMotorSpeed());
+    analogWrite(PinBridH3, getMotorSpeed());
+}
+
 void goAhead(){
-    digitalWrite(PinBridH1, HIGH);
-    digitalWrite(PinBridH2, LOW);
-    digitalWrite(PinBridH3, HIGH);
-    digitalWrite(PinBridH4, LOW);
+    analogWrite(PinBridH1, 0);
+    analogWrite(PinBridH2, 255);
+    analogWrite(PinBridH3, 0);
+    analogWrite(PinBridH4, 255);
     setMotorStatus("running");
+    delay(200);
+    analogWrite(PinBridH2, getMotorSpeed());
+    analogWrite(PinBridH4, getMotorSpeed());
 }
 
 
 void stopRightNow(){
-  digitalWrite(PinBridH1, LOW);
-  digitalWrite(PinBridH2, LOW);
-  digitalWrite(PinBridH3, LOW);
-  digitalWrite(PinBridH4, LOW);
+  analogWrite(PinBridH1, 0);
+  analogWrite(PinBridH2, 0);
+  analogWrite(PinBridH3, 0);
+  analogWrite(PinBridH4, 0);
   setMotorStatus("stopped");
 }
 
-void turnLeft(){
-  digitalWrite(PinBridH1, HIGH);
-  digitalWrite(PinBridH2, LOW);
-  digitalWrite(PinBridH3, LOW);
-  digitalWrite(PinBridH4, HIGH);
-  setMotorStatus("turningLeft");
+void turnRight(){
+  analogWrite(PinBridH1, 255);
+  analogWrite(PinBridH2, 0);
+  analogWrite(PinBridH3, 0);
+  analogWrite(PinBridH4, 255);
+  setMotorStatus("turningRight");
+  delay(200);
+  analogWrite(PinBridH1, getMotorSpeed());
+  analogWrite(PinBridH4, getMotorSpeed());
 }
 
 
-void turnRight(){
-  digitalWrite(PinBridH1, LOW);
-  digitalWrite(PinBridH2, HIGH);
-  digitalWrite(PinBridH3, HIGH);
-  digitalWrite(PinBridH4, LOW);
-  setMotorStatus("turningRight");
+void turnLeft(){
+  analogWrite(PinBridH1, 0);
+  analogWrite(PinBridH2, 255);
+  analogWrite(PinBridH3, 255);
+  analogWrite(PinBridH4, 0);
+  setMotorStatus("turningLeft");
+  delay(200);
+  analogWrite(PinBridH2, getMotorSpeed());
+  analogWrite(PinBridH3, getMotorSpeed());
+}
+
+
+void setSpeedStatus(String newValue){
+  strSpeedStatus=newValue;
 }
 
 
 String getStatus(){
-  int d = hc.measureDistanceCm();
-  if(d==0){
-    d=1024;
-  }
-
-  
-String out =  
-"ledStatus("+strLedStatus+");"+
-"lightStatus("+strLightStatus+");"+
-"breakLStatus("+strBreakLStatus+");"+
-"buzzerStatus("+strBuzzerStatus+");"+
-"luminosity("+String(analogRead(PinLDR))+");"+
-"distance("+String(d)+");"+
-"motorStatus("+strMotorStatus+");";
-   
-return out;
+    int d = hc.dist();
+    if(d==0){
+      d=1024;
+    }  
+    String out =  
+      "flashLight("+strFlashLStatus+");"+
+      "light("+strLightStatus+");"+
+      "breakL("+strBreakLStatus+");"+
+      "buzzer("+strBuzzerStatus+");"+
+      "luminosity("+String(analogRead(PinLDR))+");"+
+      "distance("+String(d)+");"+
+      "motor("+strMotorStatus+");"+
+      "speed("+strSpeedStatus+");";//+
+      //"lineL("+String(analogRead(PinLineFL))+");"+
+      //"lineR("+String(analogRead(PinLineFR))+");";
+         
+    return out;
 }
 
 void setBuzzerStatus(String newValue){
   strBuzzerStatus=newValue;
-}
-
-void setLedStatus(String newValue){
-  strLedStatus=newValue;
 }
 
 void setLightStatus(String newValue){
@@ -150,40 +238,6 @@ void setMotorStatus(String newValue){
   strMotorStatus=newValue;
 }
 
-
-
-void setup(){
-  pinMode(PinLight,   OUTPUT);
-  pinMode(PinBreakL,  OUTPUT);
-  pinMode(PinBuzzer,  OUTPUT);
-  pinMode(PinLed,     OUTPUT);
-  pinMode(PinBridH1,  OUTPUT);
-  pinMode(PinBridH2,  OUTPUT);
-  pinMode(PinBridH3,  OUTPUT);
-  pinMode(PinBridH4,  OUTPUT);
-  pinMode(PinLDR,     INPUT);
-  pinMode(PinTrig,    OUTPUT);
-  pinMode(PinEcho,    INPUT);
-  Serial.begin(9600);
-
-  setLedStatus("off");
-    setLightStatus("off");
-    setBreakLStatus("off");
-    setBuzzerStatus("off");
-    setMotorStatus("stopped");
-
-}
-
-void powerOff() {
-  // Define todos os pinos digitais de 2 a 13 (Arduino Uno) e 2 a 53 (Arduino Mega) como LOW.
-  for (int i = 2; i <= 13; i++) {
-    digitalWrite(i, LOW);
-  }
-  
-  // Se estiver usando um Arduino Mega, também configure os pinos adicionais.
-#ifdef ARDUINO_AVR_MEGA
-  for (int i = 22; i <= 53; i++) {
-    digitalWrite(i, LOW);
-  }
-#endif
+void setFlashLStatus(String newValue){
+  strFlashLStatus=newValue;
 }
